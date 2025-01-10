@@ -1,0 +1,22 @@
+{
+  "name": "backend",
+  "version": "1.0.0",
+  "main": "index.js",
+  "scripts": {
+    "populateData": "node --env-file=.env populateData.js",
+    "api": "nodemon --env-file=.env index.js",
+    "docker": "sudo docker buildx build --platform linux/amd64,linux/arm64/v8 -t iamcoder18/aaravlabsapi:latest --push ."
+  },
+  "author": "",
+  "license": "ISC",
+  "description": "",
+  "dependencies": {
+    "@google/generative-ai": "^0.21.0",
+    "body-parser": "^1.20.3",
+    "cors": "^2.8.5",
+    "express": "^4.21.2",
+    "mathjax-node": "^2.1.1",
+    "nodemon": "^3.1.9",
+    "pg": "^8.13.1"
+  }
+}
