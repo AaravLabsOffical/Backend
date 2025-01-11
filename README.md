@@ -13,3 +13,7 @@ To build the backend:
 
 To use this, you need a postgres database.
 It is reccomended that you use the `docker-compose.yaml` given in [the main repository](https://github.com/AaravLabsOffical/AaravLabs) for the best experience.
+
+## Notes
+
+The `/data` folder contains the jsonl files from [LightEval/MATH on Huggingface](https://huggingface.co/datasets/lighteval/MATH)
