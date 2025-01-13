@@ -12,7 +12,7 @@ To build the backend:
 ## Usage
 
 To use this, you need a postgres database.
-It is reccomended that you use the `docker-compose.yaml` given in [the main repository](https://github.com/AaravLabsOffical/AaravLabs) for the best experience.
+It is reccomended that you use the `docker-compose.yaml` given in [the main repository](https://github.com/AaravLabsOfficial/AaravLabs) for the best experience.
 
 ## Notes
 
