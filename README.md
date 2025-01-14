@@ -14,7 +14,7 @@ To build the backend:
 To use this, you need a postgres database.
 It is reccomended that you use the `docker-compose.yaml` given in [the main repository](https://github.com/AaravLabsOfficial/AaravLabs) for the best experience.
 
-## Developement
+## Development
 
 Documentation for the API is [here](/index.md)
 
