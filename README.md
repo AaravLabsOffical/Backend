@@ -1,6 +1,6 @@
 # AaravLabs Backend
 
-This is the backend for AaravLabs. AaravLabs is a fun, educational website for middle schoolers. It combines tough but intresting questions with AI analysis to helps kids know what they got right or where they went wrong.
+This is the backend for AaravLabs. Aarav Labs is an innovative learning platform designed to help middle schoolers with AI steps and answer analysis. It combines tough but intresting questions with AI analysis to helps kids know what they got right or where they went wrong.
 
 ## Building
 
@@ -12,4 +12,8 @@ To build the backend:
 ## Usage
 
 To use this, you need a postgres database.
-It is reccomended that you use the `docker-compose.yaml` given in [the main repository](https://github.com/AaravLabsOffical/AaravLabs) for the best experience.
+It is reccomended that you use the `docker-compose.yaml` given in [the main repository](https://github.com/AaravLabsOfficial/AaravLabs) for the best experience.
+
+## Notes
+
+The `/data` folder contains the jsonl files from [LightEval/MATH on Huggingface](https://huggingface.co/datasets/lighteval/MATH)
