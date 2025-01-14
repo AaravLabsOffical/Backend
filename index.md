@@ -37,7 +37,7 @@ Retrieves a random math question based on topic and difficulty filters.
 - `difficulty`: One of ["all", "1", "2", "3", "4", "5"]
 
 #### Response
-```json
+```
 {
     "question": string,
     "answer": string,
@@ -50,7 +50,7 @@ Retrieves a random math question based on topic and difficulty filters.
 Analyzes student solutions using AI.
 
 #### Request Body Schema
-```json
+```
 {
     "question": string,
     "correct_answer": string,
@@ -60,7 +60,7 @@ Analyzes student solutions using AI.
 ```
 
 #### Response Schema
-```json
+```
 {
     "stepsAnalysis": string,
     "answerAnalysis": string,
