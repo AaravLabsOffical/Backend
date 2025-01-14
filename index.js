@@ -1,16 +1,23 @@
+// Initial startup message
 console.log("Starting Up...")
 
-const { Client } = require('pg')
-const express = require('express')
-var cors = require('cors')
-const { json } = require('body-parser')
-const { GoogleGenerativeAI } = require("@google/generative-ai");
+// Import required dependencies
+const { Client } = require('pg')                            // PostgreSQL client for database operations
+const express = require('express')                          // Express framework for API server
+var cors = require('cors')                                  // CORS middleware for cross-origin requests
+const { json } = require('body-parser')                     // Body parser for JSON request handling
+const { GoogleGenerativeAI } = require("@google/generative-ai");  // Google's AI API client
 
+// Initialize Express application
 const app = express()
-const port = process.env.APIPORT
-const dbHost = process.env.POSTGRES_HOST ? process.env.POSTGRES_HOST : "db"
-const dbPort = process.env.POSTGRES_PORT ? process.env.POSTGRES_PORT : 5432
+const port = process.env.APIPORT                           // Server port from environment variable
+const dbHost = process.env.POSTGRES_HOST ? process.env.POSTGRES_HOST : "db"  // Database host with fallback
+const dbPort = process.env.POSTGRES_PORT ? process.env.POSTGRES_PORT : 5432  // Database port with fallback
+
+// Initialize Google AI client
 const genAI = new GoogleGenerativeAI(process.env.APIKEY);
+
+// Define response schema for AI analysis
 const schema = {
     "description": "Schema for questions.",
     "type": "object",
@@ -46,6 +53,8 @@ const schema = {
         "readable"
     ]
 };
+
+// Configure AI model with specific generation settings
 const model = genAI.getGenerativeModel({
     model: "gemini-2.0-flash-exp",
     generationConfig: {
@@ -54,6 +63,7 @@ const model = genAI.getGenerativeModel({
     },
 });
 
+// Initialize PostgreSQL client with environment variables
 const client = new Client({
     host: dbHost,
     user: process.env.POSTGRES_USER,
@@ -62,20 +72,21 @@ const client = new Client({
     database: process.env.POSTGRES_DB
 })
 
+// Define valid options for difficulty and topics
 const acceptedDifficulties = ["all", "1", "2", "3", "4", "5"]
 const acceptedTopics = ["all", "algebra", "intermediate_algebra", "prealgebra", "geometry", "number_theory", "counting_probability", "precalculus"]
 const convertedTopics = ["all", "Algebra", "Intermediate Algebra", "Prealgebra", "Geometry", "Number Theory", "Counting & Probability", "Precalculus"]
 
-app.use(cors())
-app.use(express.json())
+// Apply middleware
+app.use(cors())                 // Enable CORS for all routes
+app.use(express.json())         // Parse JSON request bodies
 
+// GET endpoint for retrieving random questions
 app.get('/', (req, res) => {
     let queryParams = req.query
 
-    // Validate data and protect against SQL Injection attacks
-
+    // Validate difficulty parameter and protect against SQL injection
     let difficulty = 0;
-
     if (acceptedDifficulties.includes(queryParams.difficulty)) {
         if (queryParams.difficulty == "all") {
             difficulty = 0
@@ -87,9 +98,9 @@ app.get('/', (req, res) => {
         return ""
     }
 
+    // Validate topic parameter and get corresponding display name
     let topic = "";
     const index = acceptedTopics.indexOf(queryParams.topic);
-
     if (index !== -1) {
         topic = convertedTopics[index];
     } else {
@@ -98,7 +109,7 @@ app.get('/', (req, res) => {
     }
 
     // TODO: Clean this up!!!
-
+    // Construct SQL query based on filtered parameters
     let query = `
         SELECT * 
         FROM Questions
@@ -107,12 +118,12 @@ app.get('/', (req, res) => {
         LIMIT 1;
     `
 
+    // Execute query and return filtered response
     client.query(query)
         .then(response => {
-
-            // Only return data the client NEEDS to know
+            // Only return necessary data to client
             let data = response.rows[0]
-            res.set("Cache-Control", "no-store")
+            res.set("Cache-Control", "no-store")  // Prevent caching
             res.send({ question: data.question, answer: data.answer, topic: data.topic, difficulty: data.difficulty })
         })
         .catch(error => {
@@ -121,8 +132,12 @@ app.get('/', (req, res) => {
         })
 })
 
+// POST endpoint for AI analysis of student solutions
 app.post("/aiAnalysis", async (req, res) => {
+    // Define system prompt for AI personality
     const systemPrompt = "You are an expert math professor. You are kind, respectful, helpful, and patient. You are never disrespectful. You are friendly and positive all the time."
+
+    // Construct detailed prompt for AI analysis
     const prompt = JSON.stringify(req.body) + String.raw`
 
 Note that user_steps should show the steps the user took to reach the answer and the user_answer should be just the answer with no further explanation.
@@ -140,12 +155,13 @@ Is the answer correct
 
 Respond with a JSON object with 5 keys: stepsAnalysis (non-empty string), answerAnalysis (non-empty string), stepsCorrect (boolean), answerCorrect (boolean), and readable (boolean).`
 
+    // Generate AI response and send to client
     const result = await model.generateContent(prompt);
     const response = result.response.text()
-
     res.send(response)
 })
 
+// Connect to database and start server
 client.connect().then(() => {
     app.listen(port, "0.0.0.0", () => {
         console.log(`API ready on 0.0.0.0:${port}`)
